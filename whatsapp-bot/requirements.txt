@@ -1,0 +1,9 @@
+fastapi>=0.104.0
+uvicorn>=0.24.0
+httpx>=0.25.0
+pydantic>=2.0.0
+pydantic-ai>=0.0.12
+python-dotenv>=1.0.0
+logfire>=0.28.0
+gradio[mcp]
+pydantic-settings

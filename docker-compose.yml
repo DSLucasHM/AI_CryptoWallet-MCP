@@ -1,0 +1,71 @@
+services:
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: mcp-server
+    ports:
+      - "7860:7860"
+    environment:
+      - MCP_SERVER_HOST=0.0.0.0
+      - MCP_SERVER_PORT=7860
+    networks:
+      - whatsapp-mcp-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:7860/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s  
+
+  whatsapp-bot:
+    build:
+      context: ./whatsapp-bot
+      dockerfile: Dockerfile
+    container_name: whatsapp-bot
+    ports:
+      - "8000:8000"
+    environment:
+
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      
+
+      - EVOLUTION_API_URL=${EVOLUTION_API_URL}
+      - EVOLUTION_INSTANCE_NAME=${EVOLUTION_INSTANCE_NAME}
+      - EVOLUTION_API_KEY=${EVOLUTION_API_KEY}
+      
+
+      - MCP_SERVER_URL=http://mcp-server:7860/gradio_api/mcp/sse
+
+      - ALLOWED_WHATSAPP_NUMBER=${ALLOWED_WHATSAPP_NUMBER}
+
+      - DATABASE_FILE=/app/data/portfolio.db
+      
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      
+      - LOGFIRE_TOKEN=${LOGFIRE_TOKEN:-}
+    volumes:
+      - whatsapp-bot-data:/app/data
+    networks:
+      - whatsapp-mcp-network
+    depends_on:
+      mcp-server:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  whatsapp-bot-data:
+    driver: local
+
+networks:
+  whatsapp-mcp-network:
+    driver: bridge
