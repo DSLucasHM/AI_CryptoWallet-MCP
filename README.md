@@ -3,7 +3,7 @@
 A production-ready WhatsApp bot integrated with a Model Context Protocol (MCP) server for cryptocurrency portfolio management and real-time market data.
 
 Project Video:
-https://youtu.be/Tmi_fNZ_ex0
+[![WhatsApp AI Crypto Wallet Bot Demo](https://www.youtube.com/watch?v=a0r2TFq4bLM1)](https://youtu.be/Tmi_fNZ_ex0)
 
 ### 👨‍💻 Author
 
